@@ -1,36 +1,56 @@
-# PC Master - Website Bán Linh Kiện PC
+# PC Master – Hệ thống Thương mại Điện tử Linh kiện PC
 
-## Yêu cầu
+Ứng dụng web Full-Stack thương mại điện tử chuyên doanh linh kiện máy tính (CPU, VGA, RAM, Mainboard, SSD) với đầy đủ phân hệ Khách hàng, Giỏ hàng, Theo dõi vận đơn, Hỗ trợ trực tuyến (Live Chat) và Trang quản trị (Admin Dashboard).
 
+---
+
+## Tính năng chính
+
+1. **Phân hệ Khách hàng & Mua sắm (`UserStore`, `ProductsPage`, `ProductDetail`):**
+   - Tìm kiếm sản phẩm theo từ khóa, lọc đa tiêu chí (danh mục, khoảng giá), sắp xếp và phân trang động.
+   - Quản lý giỏ hàng (`CartDrawer`) đồng bộ với cơ sở dữ liệu MySQL, tự động kiểm tra tồn kho thực tế.
+   - Đặt hàng với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) trong MySQL Transaction giúp chống xung đột tồn kho khi nhiều người mua cùng lúc.
+   - Theo dõi tiến trình đơn hàng trực quan (`OrderHistory` & Timeline vận đơn tự động sinh mã tracking).
+2. **Xác thực, Phân quyền & Hồ sơ (`AuthModal`, `ProfilePage`):**
+   - Đăng ký, đăng nhập và phân quyền RBAC (`user` / `admin`) sử dụng **JWT** và mã hóa mật khẩu **Bcrypt**.
+   - Tải lên và tự động nén ảnh đại diện (`800x800`, JPEG 80%) cũng như ảnh sản phẩm (`1200x1200`, JPEG 85%) phía server bằng **Multer** và **Sharp**.
+3. **Trang Quản trị & Phân tích Doanh thu (`AdminDashboard`):**
+   - Biểu đồ thống kê doanh thu theo thời gian, phễu trạng thái đơn hàng (Order Funnel), Top sản phẩm/danh mục bán chạy và cảnh báo hàng sắp hết kho (`Recharts`).
+   - Nhận thông báo đơn hàng mới theo thời gian thực qua **Server-Sent Events (SSE)** (`/api/admin/orders/stream`).
+   - Quản lý toàn diện (CRUD) sản phẩm, danh mục, đơn hàng và người dùng.
+4. **Hỗ trợ Trực tuyến (`ChatWidget`):**
+   - Hệ thống nhắn tin hỗ trợ trực tiếp giữa Khách hàng và Admin kèm bộ đếm tin nhắn chưa đọc.
+
+---
+
+## Công nghệ sử dụng
+
+- **Frontend:** React 19, TypeScript, Tailwind CSS 4, Motion (Framer Motion), Recharts, Lucide Icons, Vite 6
+- **Backend:** Node.js, Express.js (32 RESTful API & SSE endpoints), Multer, Sharp, JWT, Bcryptjs
+- **Cơ sở dữ liệu:** MySQL 8.0+ (9 bảng quan hệ, 13 B-Tree indexes tối ưu hóa truy vấn)
+
+---
+
+## Hướng dẫn cài đặt & Chạy dự án
+
+### 1. Yêu cầu hệ thống
 - **Node.js** >= 18
 - **MySQL** >= 8.0
 
-## Cài đặt
-
-### 1. Clone dự án
-
+### 2. Clone dự án & Cài đặt thư viện
 ```bash
-git clone https://github.com/PhuocNguyen2206/PCshop.git
+git clone https://github.com/thinhdang1104/PCshop.git
 cd PCshop
-```
-
-### 2. Cài dependencies
-
-```bash
 npm install
 ```
 
-### 3. Tạo file cấu hình
-
-Copy file `.env.example` thành `.env.local` và sửa lại thông tin MySQL của bạn:
-
+### 3. Cấu hình biến môi trường
+Copy file `.env.example` thành `.env.local` và cập nhật thông tin kết nối MySQL:
 ```bash
 cp .env.example .env.local
 ```
-
 Nội dung file `.env.local`:
-
-```
+```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=mat_khau_mysql_cua_ban
@@ -40,27 +60,8 @@ ADMIN_EMAIL=admin@pcmaster.local
 ADMIN_PASSWORD=mat_khau_admin_it_nhat_8_ky_tu
 ```
 
-### 4. Chạy dự án
-
+### 4. Khởi chạy ứng dụng
 ```bash
 npm run dev
 ```
-
-Server sẽ chạy tại: **http://localhost:3000**
-
-> Database và dữ liệu mẫu sẽ được tự động tạo khi chạy lần đầu.
-
-## Tài khoản Admin
-
-Tài khoản admin đầu tiên được tạo từ biến môi trường `ADMIN_EMAIL` và `ADMIN_PASSWORD`.
-
-Nếu bạn không khai báo `ADMIN_PASSWORD`, server sẽ tự sinh mật khẩu tạm và in ra terminal khi khởi động.
-
-## Công nghệ sử dụng
-
-- React 19 + TypeScript
-- Tailwind CSS 4
-- Motion (Framer Motion)
-- Vite 6
-- Express.js
-- MySQL
+Server và giao diện web sẽ chạy tại: **http://localhost:3000** (Database, các bảng, index và dữ liệu mẫu sẽ tự động được khởi tạo trong lần chạy đầu tiên).
